@@ -1,0 +1,16 @@
+Package: sparkedatools
+Title: What the Package Does (one line, title case)
+Version: 0.0.0.9000
+Authors@R: person("Gabe", "Church", email = "gabe.church@gmail.com", role = c("aut", "cre"))
+Description: This function allows you to efficiently create histograms for all of the columns in a Spark table. It generates the results for plotting on the backend, in SparkIt has a distributed type interpolator method built in, similar to the inferSchema method built into the read_csv in Spark Categorical columns will automatically be detected and plotted. This package is especially useful for EDA on large tables, it closely resembles the hist() function is core R. Requirement 1: You must have an existing sparkContext (sc) initialized to utilize this method. Requirement 2: You must pass the com.gabechurch.sparkeda jar to the spark configuration as follows before connecting. Example: conf$'sparklyr.jars.default'= "/home/gchurch/R/sparkeda_2.11-2.07.jar"
+Depends: R (>= 3.5.2)
+Imports: 
+  sparklyr,
+  dplyr,
+  ggplot2,
+  purrr,
+  lazyeval
+License: Apache-2.0
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1.9000
