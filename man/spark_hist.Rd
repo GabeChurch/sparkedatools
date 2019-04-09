@@ -4,15 +4,22 @@
 \alias{spark_hist}
 \title{A Histogram Function for SparklyR \cr}
 \usage{
-spark_hist(sparklyr_table, num_buckets = 10L)
+spark_hist(sparklyr_table, num_buckets = 10L, include_null = FALSE,
+  print_plot = TRUE, decimal_places = 2L)
 }
 \arguments{
 \item{sparklyr_table}{is the spark table you will pass to the function. You can pass using a dplyr spark table (tbl).}
 
-\item{num_buckets}{will set the number of buckets for the Spark Histograms (on each numeric column). The default is 10 buckets}
+\item{num_buckets}{(default=10L) will set the number of buckets for the Spark Histograms (on each numeric column). The default is 10 buckets  (set with 10L)}
+
+\item{include_null}{(default=FALSE) if TRUE will include a column with the null counts for each field in the histograms}
+
+\item{print_plot}{(default=FALSE) if set to TRUE by default, you can return the ggplots in a list for furthur manipulation or modification if you set to false. (dashboards, theme changes, converting to plotly charts, etc) See details for more info/ideas.}
+
+\item{decimal_places}{(default = 2L) controls the number of decimals values to round for histograms bucketed (if any)}
 }
 \description{
-This function is especially useful for EDA on large Spark/Hive tables, it is designed to resemble the hist() function in native R. It should be noted that this implementation does differ from native R, and will "bucket" the data-points. \cr
+This function  is especially useful for EDA on large Spark/Hive tables, it is designed to resemble the hist() function in native R. It should be noted that this implementation does differ from native R, and will "bucket" the data-points. \cr
 All computation is efficient and distributed in native scala/Spark \cr
 \cr
 Automatic categorical/continuous variable inference. Type agnostic. ie (String/Numeric type inference is also built-in) \cr
