@@ -19,7 +19,7 @@ spark_describe_ext = function(sparklyr_table, round_at=2L){
   library(dplyr)
   library(purrr)
   library(lazyeval)
-  summed = sdf_describe(sparklyr_table) %>% sdf_collect()
+  summed = sdf_describe(sparklyr_table) %>% dplyr::collect() %>% as.data.frame()
   collected = sparklyr::invoke_new(sc, 'com.gabechurch.sparklyRWrapper') %>% 
     sparklyr::invoke('getDistinctCounts', spark_dataframe(sparklyr_table), FALSE) %>% 
     sdf_collect()
