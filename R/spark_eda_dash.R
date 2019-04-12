@@ -42,7 +42,9 @@ spark_eda_dash = function(sparklyr_table, hist_num_buckets = 10L, hist_include_n
     plotADescription = plotADescOrig %>% 
       datatable(plotADescOrig, rownames = FALSE, options = list(
         dom = 't',
-        columnDefs = list(list(className='dt-center', targets = "_all")),
+        columnDefs = list(list(className='dt-center', targets = "_all"),
+                          list(width = '10px', targets = "_all")
+                          ),
         autoWidth = TRUE,
         initComplete = JS(
           "function(settings, json) {",
@@ -55,7 +57,9 @@ spark_eda_dash = function(sparklyr_table, hist_num_buckets = 10L, hist_include_n
       plotBDescOrig = extra_described %>% filter(summary == paste0(plotBName)) %>% select(-summary)
       plotBDescription = datatable(plotBDescOrig, rownames=FALSE, options = list(
         dom = 't',
-        columnDefs = list(list(className='dt-center', targets = "_all")),
+        columnDefs = list(list(className='dt-center', targets = "_all"),
+                          list(width = '10px', targets = "_all")
+                          ),
         autoWidth = TRUE,
         initComplete = JS(
           "function(settings, json) {",
