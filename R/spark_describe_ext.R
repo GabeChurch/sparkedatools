@@ -21,8 +21,7 @@ spark_describe_ext = function(sparklyr_table, round_at=2L){
   library(lazyeval)
   summed = sdf_describe(sparklyr_table) %>% dplyr::collect() %>% as.data.frame()
   collected = sparklyr::invoke_new(sc, 'com.gabechurch.sparklyRWrapper') %>% 
-    sparklyr::invoke('getDistinctCounts', spark_dataframe(sparklyr_table), FALSE) %>% 
-    sdf_collect()
+    sparklyr::invoke('getDistinctCounts', spark_dataframe(sparklyr_table), FALSE) %>% dplyr::collect() %>% as.data.frame()
   column_names = colnames(collected)
   descriptions = column_names %>% map(function(column_name){
     #Flatten  
