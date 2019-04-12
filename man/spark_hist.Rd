@@ -2,7 +2,7 @@
 % Please edit documentation in R/spark_hist.R
 \name{spark_hist}
 \alias{spark_hist}
-\title{A Histogram Function for SparklyR \cr}
+\title{A Histogram Function for SparklyR UpdatedAgain \cr}
 \usage{
 spark_hist(sparklyr_table, num_buckets = 10L, include_null = FALSE,
   print_plot = TRUE, decimal_places = 2L)

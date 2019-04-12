@@ -1,4 +1,4 @@
-#' A Histogram Function for SparklyR \cr
+#' A Histogram Function for SparklyR UpdatedAgain \cr
 #' @description 
 #' This function  is especially useful for EDA on large Spark/Hive tables, it is designed to resemble the hist() function in native R. It should be noted that this implementation does differ from native R, and will "bucket" the data-points. \cr
 #' All computation is efficient and distributed in native scala/Spark \cr
@@ -101,7 +101,10 @@ spark_hist = function(sparklyr_table, num_buckets = 10L, include_null = FALSE, p
     if (print_plot == TRUE){
       print(plot)
     }else {
-      plot
+      outObject = list(column_name, plot)
+      names(outObject[1]) = "chartName"
+      names(outObject[2]) = "plot"
+      outObject
     }
   })
   plots
