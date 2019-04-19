@@ -3,3 +3,5 @@
 export(spark_describe_ext)
 export(spark_eda_dash)
 export(spark_hist)
+export(spark_plot_kmeans)
+export(spark_plot_pca)
