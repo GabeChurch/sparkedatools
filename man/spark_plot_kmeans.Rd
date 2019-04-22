@@ -5,7 +5,8 @@
 \title{A SparklyR Kmeans Cluster Plotting Function \cr}
 \usage{
 spark_plot_kmeans(sparklyr_table, ml_kmean_model, plotMode = "2d",
-  optional_pca_model = "None", local_selection = 80000L)
+  optional_pca_model = "None", local_selection = 80000L,
+  combination = "experimental")
 }
 \arguments{
 \item{sparklyr_table}{is the spark table you will pass to the function. You can pass using a dplyr spark table (tbl).}
@@ -17,6 +18,8 @@ spark_plot_kmeans(sparklyr_table, ml_kmean_model, plotMode = "2d",
 \item{optional_pca_model}{(default = "None") You can plug the existing pca model you have run on the dataframe with ml_pca and it will avoid re-running. By default the PCA selects k=2 for 2-dimension and k=3 for 3-dimension so if you use a different k in your model you may be missing out on dimensionality. (Not always a bad thing)}
 
 \item{local_selection}{(default = 80000L) This is the randomly selected number of points that will ultimately be collected and plotted. The 3D model can handle up to 250,000 points (sometimes) and the 2D can handle more like 350-400,000. The default of 80,000 is set for browser performance (especially with the 3D plot).}
+
+\item{combination}{(default = "experimental") This uses a custom version of sdf_bind_cols that is faster and solves errors that I have encountered with sdf_bind_cols (called indexJoin) note it does not have support for nested columns yet}
 }
 \description{
 The function can be used to generate 2D or 3D plots to visualize and understand kmean clusters

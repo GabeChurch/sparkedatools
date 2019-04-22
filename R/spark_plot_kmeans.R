@@ -13,8 +13,9 @@
 #' @param plotMode (default=2d this will generate the output visualization with ggplot, if set to 3d it will generate a 3d plot with plotly, if set to both it will output both. You should create some variable like both_plot = .... then access for plotting like both_plot$`2d_plot` and both_plot$`3d_plot`
 #' @param optional_pca_model (default = "None") You can plug the existing pca model you have run on the dataframe with ml_pca and it will avoid re-running. By default the PCA selects k=2 for 2-dimension and k=3 for 3-dimension so if you use a different k in your model you may be missing out on dimensionality. (Not always a bad thing)
 #' @param local_selection (default = 80000L) This is the randomly selected number of points that will ultimately be collected and plotted. The 3D model can handle up to 250,000 points (sometimes) and the 2D can handle more like 350-400,000. The default of 80,000 is set for browser performance (especially with the 3D plot).
+#' @param combination (default = "experimental") This uses a custom version of sdf_bind_cols that is faster and solves errors that I have encountered with sdf_bind_cols (called indexJoin) note it does not have support for nested columns yet
 #' @export 
-spark_plot_kmeans = function(sparklyr_table, ml_kmean_model, plotMode="2d", optional_pca_model = "None", local_selection=80000L){
+spark_plot_kmeans = function(sparklyr_table, ml_kmean_model, plotMode="2d", optional_pca_model = "None", local_selection=80000L, combination="experimental"){
   library(sparklyr)
   library(dplyr)
   library(ggplot2)
@@ -38,7 +39,15 @@ spark_plot_kmeans = function(sparklyr_table, ml_kmean_model, plotMode="2d", opti
   km_clusts = ml_predict(ml_kmean_model, sparklyr_table)
   km_cluster_preds = km_clusts %>% select(prediction)
   
-  km_pca_combined = projected_pca %>% sdf_bind_cols(km_cluster_preds)
+  km_pca_combined = if(combination =="experimental"){
+    km_cluster_preds_df = km_cluster_preds %>% spark_dataframe()
+    projected_pca_df = projected_pca %>% spark_dataframe()
+    joined_df = sparklyr::invoke_new(sc, "com.gabechurch.sparklyRWrapper") %>%
+      sparklyr::invoke("indexJoin", projected_pca_df, km_cluster_preds_df)
+    sdf_copy_to(sc, joined_df, "km_pca_combined")
+  }else{
+    projected_pca %>% sdf_bind_cols(km_cluster_preds)
+  }
   
   df_length = sparklyr_table %>% count() %>% collect() %>% as.double()
   
