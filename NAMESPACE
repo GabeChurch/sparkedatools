@@ -3,6 +3,7 @@
 export(spark_describe_ext)
 export(spark_eda_dash)
 export(spark_hist)
+export(spark_hist_overlay)
 export(spark_plot_corr)
 export(spark_plot_kmeans)
 export(spark_plot_pca)
