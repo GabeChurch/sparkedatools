@@ -79,7 +79,7 @@ spark_hist_overlay = function(sparklyr_table, response_var, max_numeric_ticks = 
                         y='Counts',
                         fill=paste0(target_name))
       ) + 
-        geom_bar(stat="identity", width=0.75) + #, width=0.75, col="darkgreen", fill="green", alpha=.2) #+ 
+        geom_bar(stat="identity", width=0.75, col="black") +  
         scale_y_continuous(labels=comma, breaks = scales::pretty_breaks()) + 
         scale_x_discrete(limits=target_order) +
         theme(axis.text.x = element_text(angle=60, hjust=1, vjust=0.5, size=11),
@@ -95,9 +95,9 @@ spark_hist_overlay = function(sparklyr_table, response_var, max_numeric_ticks = 
                         y='Counts',
                         fill=paste0(target_name))
       ) + 
-        geom_bar(stat="identity", width=0.75) + #, width=0.75, col="darkgreen", fill="green", alpha=.2) #+ 
+        geom_bar(stat="identity", width=0.75, col="black") +  
         scale_y_continuous(labels=comma, breaks = scales::pretty_breaks()) + 
-        scale_x_continuous(breaks = scale_cont_k(max_numeric_ticks, prepped[,paste0(column_name)])) + # breaks=pretty(prepped[,column_name], n=as.numeric(paste0(numeric_ticks)))) +
+        scale_x_continuous(breaks = scale_cont_k(max_numeric_ticks, prepped[,paste0(column_name)])) + 
         theme(axis.text.x = element_text(angle=60, hjust=1, vjust=0.5, size=11),
               axis.text.y = element_text(size=11),
               axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0), size=15),
@@ -110,7 +110,7 @@ spark_hist_overlay = function(sparklyr_table, response_var, max_numeric_ticks = 
                         y='Counts',
                         fill=paste0(target_name))
       ) + 
-        geom_bar(stat="identity", width=0.75) + #, width=0.75, col="darkgreen", fill="green", alpha=.2) #+ 
+        geom_bar(stat="identity", width=0.75, col="black") + 
         scale_y_continuous(labels=comma, breaks = scales::pretty_breaks()) + 
         #scale_x_discrete(limits=target_order) +
         theme(axis.text.x = element_text(angle=60, hjust=1, vjust=0.5, size=11),
