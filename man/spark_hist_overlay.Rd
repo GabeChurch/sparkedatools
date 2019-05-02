@@ -4,12 +4,14 @@
 \alias{spark_hist_overlay}
 \title{A histogram with reponse function for a sparklyr table \cr}
 \usage{
-spark_hist_overlay(sparklyr_table, response_var)
+spark_hist_overlay(sparklyr_table, response_var, max_numeric_ticks = 40)
 }
 \arguments{
 \item{sparklyr_table}{is the sparklyr table to pass to the function}
 
 \item{response_var}{is the string response variable you want to overlay the histograms with.}
+
+\item{max_numeric_ticks}{40 is the default, using over 40 is fine but you should increase the output width using knitR.}
 }
 \description{
 A histogram for plotting response ove the variables in a table. You will need to reduce the range to around 200 per variable to get effective plots for this method at the moment, as bucketing is not supported (yet).
