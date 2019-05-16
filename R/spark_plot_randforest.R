@@ -1,6 +1,6 @@
-#' A SparklyR Random Forest Plotting Function \cr
+#' A SparklyR Random Forest Classification Model Plotting Function \cr
 #' @description 
-#' This function can be used to generate plots of the underlying decision trees used in a spark random forest model
+#' This function can be used to generate plots of the underlying decision trees used in the spark random forest classification model
 #' @details
 #' Important package requirements: \cr
 #' You MUST have the sparklyr, igraph, and purrr packages installed to use this function \cr
@@ -11,24 +11,24 @@
 #' \code{outputs = spark_plot_kmeans(inputDF, kmean_model, plotMode="both")}
 #' @param sparklyr_table  is the spark table you will pass to the function. You can pass using a dplyr spark table (tbl) This could be the test or train set you want to use for prediction generation.
 #' @param ml_rf_model  is the ml_random_forest model output you pass to this function
+#' @param show_stats  (default=TRUE)  This will include the metrics in each 
 #' @param plot_treeIDs (default="all") You can plot specific Trees like plot_treeIDs = list(1,4,5) where 1,4,5 are the target treeIDs you want to plot
 #' @param hdfs_temp_path (default = "/tmp/RandomForestClassificationModels/") You should change this path to another location if you do not have permission to write in the hdfs or local /tmp directory. This function must write the spark RandomForestRegressionModel to hdfs temporarily to access certain model specs needed. 
 #' @export 
-spark_plot_randforest = function(sparklyr_table, ml_rf_model, plot_treeIDs="all", hdfs_temp_path = "/tmp/RandomForestClassificationModels/"){
+spark_plot_randforest = function(sparklyr_table, ml_rf_model, show_stats=TRUE, plot_treeIDs="all", hdfs_temp_path = "/tmp/RandomForestClassificationModels"){
   library(purrr)
   library(sparklyr)
   library(igraph)
   
-  # I have an alternate prediciton method I am currently testing in native scala-Spark. The core spark prediction method does not give us information about things like per-node-predictions, etc., which can increase our understanding and provide per-model performance information visually. 
-  preds = ml_predict(ml_rf_model, sparklyr_table)  
+  preds = ml_predict(ml_rf_model, sparklyr_table)
   
   time = round(as.numeric(Sys.time())*1000, 0)
   
-  path_date = paste0(hdfs_temp_path, time)
+  path_date = paste0(hdfs_temp_path, '/', time)
   
   ml_rf_model$model %>% spark_jobj() %>% sparklyr::invoke("save", path_date)
   
-  rf_spec <- spark_read_parquet(sc,paste0(path_date, "/data"))
+  rf_spec <- spark_read_parquet(sc,name="rf_spec", path=paste0(path_date, "/data"))
   
   meta <- preds %>% 
     select(features) %>% 
@@ -48,8 +48,9 @@ spark_plot_randforest = function(sparklyr_table, ml_rf_model, plot_treeIDs="all"
     sparklyr::invoke("selectExpr", list("treeID", "nodeData.*", "nodeData.split.*"))
   
   selected = full_rf_spec %>% 
-    sdf_register() %>% 
-    select(-split, -impurityStats) 
+    sparklyr::invoke("drop", list("split", "impurityStata")) %>%
+    sdf_register() #%>% 
+  #select(-split, -impurityStats) 
   
   joinedName = selected %>% 
     left_join(meta, by = "featureIndex") %>% sdf_register("ml_rf_tree")
@@ -58,7 +59,7 @@ spark_plot_randforest = function(sparklyr_table, ml_rf_model, plot_treeIDs="all"
   select 
   id,
   treeID,
-  --label,   TO DO, add support for labels from StringIndexer etc. (In future release) for converting binary target predictions to their string counterparts in tree plot
+  --label,
   impurity, 
   gain,
   leftChild,
@@ -81,7 +82,17 @@ spark_plot_randforest = function(sparklyr_table, ml_rf_model, plot_treeIDs="all"
   all_plots = treeIDs %>% map(function(treeID_target){
     gframe = all_gframe %>% filter(treeID == treeID_target) %>% collect()
     
-    vertices <- gframe %>% mutate(label = name, name = id)
+    vertices <- if (show_stats == TRUE){
+      gframe %>% mutate(label = paste(name, 
+                                      "",
+                                      paste0("impurity: ", round(impurity, 3)), 
+                                      paste0("gain: ", round(gain, 3)), 
+                                      sep = "\n"), 
+                        name = id)
+    }else{
+      gframe %>% mutate(label = name, 
+                        name = id)
+    }
     
     edges <- gframe %>%
       transmute(from = id, to = leftChild, label = leftCategoriesOrThreshold) %>% 
@@ -98,13 +109,14 @@ spark_plot_randforest = function(sparklyr_table, ml_rf_model, plot_treeIDs="all"
       ylim=c(3,5), xlim = c(-15, 15),
       #Specifying the Size of the rectangles in the plot 
       vertex.shape = "rectangle",  
-      vertex.size = 60, # width of rectangle
-      vertex.size2=20, # The second size of the node (e.g. for a rectangle) it is height
+      vertex.size = 72, # width of rectangle
+      vertex.size2=if (show_stats == TRUE){50}else{20}, # The second size of the node (e.g. for a rectangle) it is height
       vertex.color="lightblue",
       #Specifying position, size, font etc for labels
       vertex.label.font=1, # Font: 1 plain, 2 bold, 3, italic, 4 bold italic, 5 symbol
       vertex.label.cex=0.7, # Font size (multiplication factor, device-dependent)
       vertex.label.dist=0, # Distance between the label and the vertex
+      
       vertex.label.color="black",
       edge.width=1, # Edge width, defaults to 1
       edge.arrow.size=0.5,
@@ -115,15 +127,16 @@ spark_plot_randforest = function(sparklyr_table, ml_rf_model, plot_treeIDs="all"
     title(paste("Tree ", treeID_target),cex.main=2,col.main="black")
     
   })
-  # Deleting the temp model we saved 
+  
   hconf = sc %>% spark_context() %>% sparklyr::invoke("hadoopConfiguration")
   fs = invoke_static(sc, "org.apache.hadoop.fs.FileSystem", "get",  hconf)
+  
   path = sparklyr::invoke_new(sc, "org.apache.hadoop.fs.Path", path_date)
   if((fs %>% sparklyr::invoke("exists", path)==TRUE)){
     fs %>% sparklyr::invoke("delete", path, TRUE)
   }else{
-    print("ERROR, no random forest model detected. Please pass outputs from ml_random_forest()")
+    print("no random forest model detected")
   }
-  # Returning the plots
+  
   all_plots
 }

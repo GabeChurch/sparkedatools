@@ -2,22 +2,25 @@
 % Please edit documentation in R/spark_plot_randforest.R
 \name{spark_plot_randforest}
 \alias{spark_plot_randforest}
-\title{A SparklyR Random Forest Plotting Function \cr}
+\title{A SparklyR Random Forest Classification Model Plotting Function \cr}
 \usage{
-spark_plot_randforest(sparklyr_table, ml_rf_model, plot_treeIDs = "all",
-  hdfs_temp_path = "/tmp/RandomForestClassificationModels/")
+spark_plot_randforest(sparklyr_table, ml_rf_model, show_stats = TRUE,
+  plot_treeIDs = "all",
+  hdfs_temp_path = "/tmp/RandomForestClassificationModels")
 }
 \arguments{
 \item{sparklyr_table}{is the spark table you will pass to the function. You can pass using a dplyr spark table (tbl) This could be the test or train set you want to use for prediction generation.}
 
 \item{ml_rf_model}{is the ml_random_forest model output you pass to this function}
 
+\item{show_stats}{(default=TRUE)  This will include the metrics in each}
+
 \item{plot_treeIDs}{(default="all") You can plot specific Trees like plot_treeIDs = list(1,4,5) where 1,4,5 are the target treeIDs you want to plot}
 
 \item{hdfs_temp_path}{(default = "/tmp/RandomForestClassificationModels/") You should change this path to another location if you do not have permission to write in the hdfs or local /tmp directory. This function must write the spark RandomForestRegressionModel to hdfs temporarily to access certain model specs needed.}
 }
 \description{
-This function can be used to generate plots of the underlying decision trees used in a spark random forest model
+This function can be used to generate plots of the underlying decision trees used in the spark random forest classification model
 }
 \details{
 Important package requirements: \cr
