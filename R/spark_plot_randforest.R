@@ -15,7 +15,8 @@
 #' @param plot_treeIDs (default="all") You can plot specific Trees like plot_treeIDs = list(1,4,5) where 1,4,5 are the target treeIDs you want to plot
 #' @param hdfs_temp_path (default = "/tmp/RandomForestClassificationModels/") You should change this path to another location if you do not have permission to write in the hdfs or local /tmp directory. This function must write the spark RandomForestRegressionModel to hdfs temporarily to access certain model specs needed. 
 #' @export 
-spark_plot_randforest = function(sparklyr_table, ml_rf_model, show_stats=TRUE, plot_treeIDs="all", hdfs_temp_path = "/tmp/RandomForestClassificationModels"){
+spark_plot_randforest = function(sparklyr_table, ml_rf_model, show_stats=TRUE, plot_treeIDs="all", y_lim=c(3,5), x_lim = c(-15, 15), 
+                                 hdfs_temp_path = "/tmp/RandomForestClassificationModels"){
   library(purrr)
   library(sparklyr)
   library(igraph)
@@ -106,7 +107,8 @@ spark_plot_randforest = function(sparklyr_table, ml_rf_model, show_stats=TRUE, p
       layout = layout_as_tree(g, root = c(1)),
       #Controlling the size of the visualization
       rescale = FALSE,
-      ylim=c(3,5), xlim = c(-15, 15),
+      #ylim=c(3,5), xlim = c(-15, 15),
+      ylim=y_lim, xlim = x_lim,
       #Specifying the Size of the rectangles in the plot 
       vertex.shape = "rectangle",  
       vertex.size = 72, # width of rectangle
