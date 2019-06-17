@@ -5,7 +5,7 @@
 \title{A SparklyR Random Forest Classification Model Plotting Function \cr}
 \usage{
 spark_plot_randforest(sparklyr_table, ml_rf_model, show_stats = TRUE,
-  plot_treeIDs = "all",
+  plot_treeIDs = "all", y_lim = c(3, 5), x_lim = c(-15, 15),
   hdfs_temp_path = "/tmp/RandomForestClassificationModels")
 }
 \arguments{
