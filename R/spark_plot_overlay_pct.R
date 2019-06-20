@@ -17,6 +17,7 @@ spark_plot_overlay_pct = function(sparklyr_table, response_var, max_numeric_tick
   library(ggplot2)
   library(purrr)
   library(sparklyr)
+  library(scales)
   
   numericcharacters = function(x) {
     !any(is.na(suppressWarnings(as.numeric(x)))) & is.character(x)
@@ -35,7 +36,7 @@ spark_plot_overlay_pct = function(sparklyr_table, response_var, max_numeric_tick
     maxi = max(x)
     seq_range = seq(from = mini, to = maxi, by = (maxi - mini)/k_ticks)
     max_decimals = (x %>% map(function(z){decimalplaces(z)}) %>% as.numeric() %>% max())
-    print(max_decimals)
+    #print(max_decimals)
     final = seq_range %>% round(max_decimals)
     #print(final %>% paste(collapse=","))
     final
@@ -83,7 +84,7 @@ spark_plot_overlay_pct = function(sparklyr_table, response_var, max_numeric_tick
     
     output = (1:length(by_column_name))%>% map(function(i){
       sum_counts = (by_column_name[[i]])[,"Counts"] %>% sum()
-      print(sum_counts)
+      #print(sum_counts)
       by_column_name[[i]] %>% mutate(pct = round(100*((Counts)/sum_counts), 0))  #[,"Counts"]
     })
     
