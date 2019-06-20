@@ -38,7 +38,7 @@ spark_plot_gmm =function (sparklyr_table,
   
   ## Getting the Cluster Centers from the PCA model and the Clusters for the graph
   sparklyr_table %>% colnames()
-  
+  selected = ml_gmm_model$gaussians_df()
   gmm_centers = do.call(rbind.data.frame, selected$mean)
   names(gmm_centers) = sparklyr_table %>% colnames()
   
