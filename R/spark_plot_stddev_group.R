@@ -44,7 +44,7 @@ spark_plot_stddev_group = function(sparklyr_table, group_col){
   collected = collected[order(collected$z_score), ]  # sort
   collected[[paste0(group_col)]] = factor(collected[[paste0(group_col)]], levels=collected[[group_col]]) # required to maintain sortted order in plot
   
-  ggplot(collected2, aes_string(x=paste0(group_col), y='z_score', label='z_score')) + 
+  ggplot(collected, aes_string(x=paste0(group_col), y='z_score', label='z_score')) + 
     geom_bar(stat='identity', aes(fill=field_type), width=.5)  +
     scale_fill_manual(name=paste0(otherCol), 
                       labels = c("Above Average", "Below Average"), 

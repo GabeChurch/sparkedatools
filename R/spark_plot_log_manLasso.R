@@ -51,11 +51,11 @@ spark_plot_log_manLasso = function(sparklyr_table, predictor, num_folds=3, paral
                                   input_cols = targetCols, 
                                   output_col = 'features')
       estimator = ml_logistic_regression(sc, 
-                                         label_col = 'survived', #predictor, 
+                                         label_col = paste0(predictor), #predictor, 
                                          features_col = 'features')
       param_grid = list(logistic_regression = list(elastic_net_param = 0))
       evaluator = ml_binary_classification_evaluator(sc, 
-                                                     label_col = 'survived') #predictor)
+                                                     label_col = paste0(predictor)) #predictor)
       # Using the new API ml cross validator allows us to use multithreading on the driver to launch models in parallel
       ret_cv = ml_cross_validator(
         df_va,
@@ -74,7 +74,7 @@ spark_plot_log_manLasso = function(sparklyr_table, predictor, num_folds=3, paral
   
   
   ggplot(columnAUC_tbl,
-         aes(excluded_feature, areaUnderROC, fill = avg_metric)) +
+         aes(excluded_feature, areaUnderROC, fill = areaUnderROC)) +
     coord_cartesian(ylim = c(0.5, 1)) +
     geom_hline(aes(yintercept = allColumn_AUC), linetype = 'dashed') +
     annotate(
