@@ -14,6 +14,7 @@
 spark_plot_stddev_group = function(sparklyr_table, group_col){
   inputCols = sparklyr_table %>% colnames() 
   otherCol = inputCols[!inputCols %in% group_col][1]
+  sparklyr_table = sparklyr_table %>% sdf_register('sparklyr_table')
   
   initial_sql = stringr::str_interp("
     SELECT 

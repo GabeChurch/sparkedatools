@@ -47,7 +47,7 @@ spark_plot_log_manLasso = function(sparklyr_table, predictor, num_folds=3, paral
       #return the column names without the column to drop
       targetCols = inputCols[!inputCols %in% dropCol]
       #runModel
-      df_va = ft_vector_assembler(df_titanic, 
+      df_va = ft_vector_assembler(sparklyr_table, 
                                   input_cols = targetCols, 
                                   output_col = 'features')
       estimator = ml_logistic_regression(sc, 
